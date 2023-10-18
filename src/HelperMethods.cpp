@@ -364,30 +364,32 @@ Image HelperMethods::Scale(const Image& top, bool red, float x, bool green, floa
             rgb[j] = pTop.GetRGB(j);
 
         // Scale Selected Colors (Char, not Floats)
-        if (red == 1) {
+        if (red) {
             if (rgb[0] * x > global_max)
                 rgbTemp[0] = global_max;
             else
-                rgbTemp[0] = (unsigned char)(rgb[0] * x);
-        }
-        else
+                rgbTemp[0] = static_cast<unsigned char>(rgb[0] * x);
+        } else {
             rgbTemp[0] = rgb[0];
-        if (green == 1) {
+        }
+
+        if (green) {
             if (rgb[1] * y > global_max)
                 rgbTemp[1] = global_max;
             else
-                rgbTemp[1] = (unsigned char)(rgb[1] * y);
-        }
-        else
+                rgbTemp[1] = static_cast<unsigned char>(rgb[1] * y);
+        } else {
             rgbTemp[1] = rgb[1];
-        if (blue == 1) {
+        }
+
+        if (blue) {
             if (rgb[2] * z > global_max)
                 rgbTemp[2] = global_max;
             else
-                rgbTemp[2] = (unsigned char)(rgb[2] * z);
-        }
-        else
+                rgbTemp[2] = static_cast<unsigned char>(rgb[2] * z);
+        } else {
             rgbTemp[2] = rgb[2];
+        }
 
         // Add Pixel to Temp
         Pixel p = Pixel(rgbTemp[0], rgbTemp[1], rgbTemp[2]);
@@ -396,6 +398,7 @@ Image HelperMethods::Scale(const Image& top, bool red, float x, bool green, floa
 
     return img;
 }
+
 
 vector<Image> HelperMethods::SepRGB(const Image& top) {
     // Load Images, Create Temp
