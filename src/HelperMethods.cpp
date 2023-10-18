@@ -315,7 +315,7 @@ Image HelperMethods::AddRGB(const Image& top, unsigned char red, unsigned char g
     // Load Images, Create Temp
     Image img = Image(top.GetHeader());
 
-    // ADD RGB Each Pixel
+    // ADD RGB to Each Pixel
     for (int i = 0; i < top.GetPixelVectorCount(); ++i) {
         Pixel pTop = top.GetIndPixel(i);
         float rgb[3];
@@ -326,26 +326,21 @@ Image HelperMethods::AddRGB(const Image& top, unsigned char red, unsigned char g
             rgb[j] = NormChar(pTop.GetRGB(j), global_max, global_min);
 
         // Add RGBs
-        float a = rgb[0] + NormChar(red, global_max, global_min);
-        if (a > 1)
-            a = 1;
-        rgbTemp[0] = (unsigned char)(a * 255 + 0.5f);
-        a = rgb[1] + NormChar(green, global_max, global_min);
-        if (a > 1)
-            a = 1;
-        rgbTemp[1] = (unsigned char)(a * 255 + 0.5f);
-        a = rgb[2] + NormChar(blue, global_max, global_min);
-        if (a > 1)
-            a = 1;
-        rgbTemp[2] = (unsigned char)(a * 255 + 0.5f);
+        for (int j = 0; j < 3; ++j) {
+            float a = rgb[j] + NormChar(red, global_max, global_min);
+            if (a > 1)
+                a = 1;
+            rgbTemp[j] = (unsigned char)(a * 255 + 0.5f);
+        }
 
         // Add Pixel to Temp
         Pixel p = Pixel(rgbTemp[0], rgbTemp[1], rgbTemp[2]);
         img.AddPixel(p);
     }
 
-    return img;
+    return img;  // Return the modified image.
 }
+
 
 Image HelperMethods::Scale(const Image& top, bool red, float x, bool green, float y, bool blue, float z) {
     // Load Images, Create Temp
