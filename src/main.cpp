@@ -16,12 +16,14 @@ int main() {
     HelperMethods::writeFile("output/part2.tga", result2);
 
     // Task 3: Use the Multiply blending mode to combine layer1.tga with pattern2.tga
-    // Store the results temporarily, then load text.tga and combine it with the previous results using Screen blending mode
-    Image pattern2 = HelperMethods::readFile("input/pattern2.tga");
-    Image tempResult3 = HelperMethods::Multiply(layer1, pattern2);
-    Image text = HelperMethods::readFile("input/text.tga");
-    Image result3 = HelperMethods::Screen(text, tempResult3, pattern2); // Replace `anotherImage` with the correct image.
-    HelperMethods::writeFile("output/part3.tga", result3);
+Image pattern2 = HelperMethods::readFile("input/pattern2.tga");
+Image tempResult3 = HelperMethods::Multiply(layer1, pattern2);
+
+// Load text.tga and combine it with the previous results using Screen blending mode
+Image text = HelperMethods::readFile("input/text.tga");
+Image result3 = HelperMethods::Screen(layer1, pattern2, text); // Combine pattern2 and text using Screen blending mode
+HelperMethods::writeFile("output/part3.tga", result3);
+
 
     // Task 4: Multiply layer2.tga with circles.tga, and store it
     Image circles = HelperMethods::readFile("input/circles.tga");
