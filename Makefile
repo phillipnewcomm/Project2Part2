@@ -1,8 +1,9 @@
-
 build:
-	g++ -o project2.out src/*.cpp
+	g++ -std=c++11 -o project2.out src/*.cpp
+
 clean:
-	rm output/*
+	rm -f output/*
+
 differences:
 	diff output/part1.tga examples/EXAMPLE_part1.tga
 	diff output/part2.tga examples/EXAMPLE_part2.tga
@@ -17,5 +18,6 @@ differences:
 	diff output/part9.tga examples/EXAMPLE_part9.tga
 	diff output/part10.tga examples/EXAMPLE_part10.tga
 	diff output/extracredit.tga examples/EXAMPLE_extracredit.tga
+
 run:
 	./project2.out
