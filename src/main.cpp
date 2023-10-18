@@ -38,9 +38,10 @@ HelperMethods::writeFile("output/part3.tga", result3);
     HelperMethods::writeFile("output/part5.tga", result5);
 
     // Task 6: Load car.tga and add 200 to the green channel
-    Image car2 = HelperMethods::readFile("input/car.tga");
-    HelperMethods::AddRGB(car2, 0, 200, 0);
-    HelperMethods::writeFile("output/part6.tga", car2);
+Image car2 = HelperMethods::readFile("input/car.tga");
+Image result6 = HelperMethods::AddRGB(car2, 0, 200, 0);
+HelperMethods::writeFile("output/part6.tga", result6);
+
 
     // Task 7: Load car.tga and scale the red channel by 4, and the blue channel by 0
     Image car3 = HelperMethods::readFile("input/car.tga");
