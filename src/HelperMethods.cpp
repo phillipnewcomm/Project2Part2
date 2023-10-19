@@ -315,7 +315,7 @@ Image HelperMethods::AddRGB(const Image& top, unsigned char red, unsigned char g
     // Load Images, Create Temp
     Image img = Image(top.GetHeader());
 
-    // ADD RGB to Each Pixel
+    // ADD RGB Each Pixel
     for (int i = 0; i < top.GetPixelVectorCount(); ++i) {
         Pixel pTop = top.GetIndPixel(i);
         float rgb[3];
@@ -325,20 +325,12 @@ Image HelperMethods::AddRGB(const Image& top, unsigned char red, unsigned char g
         for (int j = 0; j < 3; ++j)
             rgb[j] = NormChar(pTop.GetRGB(j), global_max, global_min);
 
-        // Add RGBs
-        float r = rgb[0] + NormChar(red, global_max, global_min);
-        float g = rgb[1] + NormChar(green, global_max, global_min); // Update green channel
-        float b = rgb[2] + NormChar(blue, global_max, global_min);
+        // Set Red channel to 0
+        rgbTemp[0] = 0;
 
-        // Clamp the values to [0, 1]
-        if (r > 1.0) r = 1.0;
-        if (g > 1.0) g = 1.0;
-        if (b > 1.0) b = 1.0;
-
-        // Map the values back to [0, 255] and update the pixel
-        rgbTemp[0] = static_cast<unsigned char>(r * 255 + 0.5f);
-        rgbTemp[1] = static_cast<unsigned char>(g * 255 + 0.5f);
-        rgbTemp[2] = static_cast<unsigned char>(b * 255 + 0.5f);
+        // Add Green and Blue channels
+        rgbTemp[1] = (unsigned char)(rgb[1] + NormChar(green, global_max, global_min) * 255 + 0.5f);
+        rgbTemp[2] = (unsigned char)(rgb[2] + NormChar(blue, global_max, global_min) * 255 + 0.5f);
 
         // Add Pixel to Temp
         Pixel p = Pixel(rgbTemp[0], rgbTemp[1], rgbTemp[2]);
@@ -347,6 +339,7 @@ Image HelperMethods::AddRGB(const Image& top, unsigned char red, unsigned char g
 
     return img;
 }
+
 
 
 Image HelperMethods::Scale(const Image& top, bool red, float x, bool green, float y, bool blue, float z) {
