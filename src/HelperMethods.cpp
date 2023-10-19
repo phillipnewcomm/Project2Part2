@@ -365,10 +365,8 @@ Image HelperMethods::Scale(const Image& top, bool red, float x, bool green, floa
 
         // Scale Selected Colors (Char, not Floats)
         if (red) {
-            if (rgb[0] * x > global_max)
-                rgbTemp[0] = global_max;
-            else
-                rgbTemp[0] = static_cast<unsigned char>(rgb[0] * x);
+            // Set the red channel to 0
+            rgbTemp[0] = 0;
         } else {
             rgbTemp[0] = rgb[0];
         }
@@ -383,8 +381,10 @@ Image HelperMethods::Scale(const Image& top, bool red, float x, bool green, floa
         }
 
         if (blue) {
-            // Negate the blue channel (set it to 0)
-            rgbTemp[2] = 0;
+            if (rgb[2] * z > global_max)
+                rgbTemp[2] = global_max;
+            else
+                rgbTemp[2] = static_cast<unsigned char>(rgb[2] * z);
         } else {
             rgbTemp[2] = rgb[2];
         }
