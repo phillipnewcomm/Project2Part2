@@ -349,48 +349,52 @@ Image HelperMethods::AddRGB(const Image& top, unsigned char red, unsigned char g
 }
 
 
-Image HelperMethods::Scale(const Image& top, bool red, float redFactor, bool green, float greenFactor, bool blue, float blueFactor) {
-    // Create a white image with the same dimensions as the original image.
-    Image img = Image(top.GetHeader());
-    int width = top.GetWidth();
-    int height = top.GetHeight();
+Image HelperMethods::Scale(const Image& top, bool red, float x, bool green, float y, bool blue, float z) {
+	// Load Images, Create Temp
+	Image img = Image(top.GetHeader());
 
-    // Create scaling factors for each color channel.
-    float redScale = redFactor;
-    float greenScale = greenFactor;
-    float blueScale = blueFactor;
+	// Scale EACH PIXEL
+	for (int i = 0; i < top.GetPixelVectorCount(); ++i) {
+		Pixel pTop = top.GetIndPixel(i);
+		unsigned char rgb[3];
+		unsigned char rgbTemp[3];
 
-    // Scale EACH PIXEL
-    for (int i = 0; i < top.GetPixelVectorCount(); ++i) {
-        Pixel pTop = top.GetIndPixel(i);
-        unsigned char rgb[3];
+		// Fill RGBs
+		for (int j = 0; j < 3; ++j)
+			rgb[j] = pTop.GetRGB(j);
 
-        // Fill RGBs
-        for (int j = 0; j < 3; ++j)
-            rgb[j] = pTop.GetRGB(j);
+		// Scale Selected Colors (Char, not Floats)
+		if (red == 1) {
+			if (rgb[0] * x > global_max)
+				rgbTemp[0] = global_max;
+			else
+				rgbTemp[0] = (unsigned char)(rgb[0] * x);
+		}
+		else
+			rgbTemp[0] = rgb[0];
+		if (green == 1) {
+			if (rgb[1] * y > global_max)
+				rgbTemp[1] = global_max;
+			else
+				rgbTemp[1] = (unsigned char)(rgb[1] * y);
+		}
+		else
+			rgbTemp[1] = rgb[1];
+		if (blue == 1) {
+			if (rgb[2] * z > global_max)
+				rgbTemp[2] = global_max;
+			else
+				rgbTemp[2] = (unsigned char)(rgb[2] * z);
+		}
+		else
+			rgbTemp[2] = rgb[2];
 
-        // Apply scaling factors based on the channel flags.
-        if (red)
-            rgb[0] = static_cast<unsigned char>(static_cast<float>(rgb[0]) * redScale);
-        if (green)
-            rgb[1] = static_cast<unsigned char>(static_cast<float>(rgb[1]) * greenScale);
-        if (blue)
-            rgb[2] = static_cast<unsigned char>(static_cast<float>(rgb[2]) * blueScale);
+		// Add Pixel to Temp
+		Pixel p = Pixel(rgbTemp[0], rgbTemp[1], rgbTemp[2]);
+		img.AddPixel(p);
+	}
 
-        // Clamp the values to the valid range [0, 255].
-        for (int j = 0; j < 3; ++j) {
-            if (rgb[j] < global_min)
-                rgb[j] = global_min;
-            else if (rgb[j] > global_max)
-                rgb[j] = global_max;
-        }
-
-        // Add Pixel to Temp
-        Pixel p = Pixel(rgb[0], rgb[1], rgb[2]);
-        img.AddPixel(p);
-    }
-
-    return img;
+	return img;
 }
 
 
