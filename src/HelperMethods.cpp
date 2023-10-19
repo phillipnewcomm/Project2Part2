@@ -349,8 +349,7 @@ Image HelperMethods::AddRGB(const Image& top, unsigned char red, unsigned char g
 }
 
 
-
-Image HelperMethods::Scale(const Image& top, bool red, float x, bool green, float y, bool blue, float z) {
+Image HelperMethods::Scale(const Image& top, bool red, float redScale, bool green, float greenScale, bool blue, float blueScale) {
     // Load Images, Create Temp
     Image img = Image(top.GetHeader());
 
@@ -364,30 +363,24 @@ Image HelperMethods::Scale(const Image& top, bool red, float x, bool green, floa
         for (int j = 0; j < 3; ++j)
             rgb[j] = pTop.GetRGB(j);
 
-        // Scale Selected Colors (Char, not Floats)
+        // Scale Selected Colors
         if (red) {
-            if (rgb[0] * x > global_max)
+            if (rgb[0] * redScale > global_max)
                 rgbTemp[0] = global_max;
             else
-                rgbTemp[0] = static_cast<unsigned char>(rgb[0] * x);
+                rgbTemp[0] = static_cast<unsigned char>(rgb[0] * redScale);
         } else {
             rgbTemp[0] = rgb[0];
         }
 
-        if (green) {
-            if (rgb[1] * y > global_max)
-                rgbTemp[1] = global_max;
-            else
-                rgbTemp[1] = static_cast<unsigned char>(rgb[1] * y);
-        } else {
-            rgbTemp[1] = rgb[1];
-        }
+        // Leave the green channel unchanged
+        rgbTemp[1] = rgb[1];
 
         if (blue) {
-            if (rgb[2] * z > global_max)
+            if (rgb[2] * blueScale > global_max)
                 rgbTemp[2] = global_max;
             else
-                rgbTemp[2] = static_cast<unsigned char>(rgb[2] * z);
+                rgbTemp[2] = static_cast<unsigned char>(rgb[2] * blueScale);
         } else {
             rgbTemp[2] = rgb[2];
         }
@@ -399,6 +392,7 @@ Image HelperMethods::Scale(const Image& top, bool red, float x, bool green, floa
 
     return img;
 }
+
 
 vector<Image> HelperMethods::SepRGB(const Image& top) {
     // Load Images, Create Temp
