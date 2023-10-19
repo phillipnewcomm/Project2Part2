@@ -45,7 +45,7 @@ HelperMethods::writeFile("output/part6.tga", result6);
 
     // Task 7: Load car.tga and scale the red channel by 4, and the blue channel by 0
     Image car3 = HelperMethods::readFile("input/car.tga");
-    HelperMethods::Scale(car3, true, 4.0, false, 0.0, true, 1.0);
+    HelperMethods::Scale(car3, true, 4.0, false, 0.0, true, 0.0);
     HelperMethods::writeFile("output/part7.tga", car3);
 
     // Task 8: Load car.tga and write each channel to separate files
