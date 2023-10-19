@@ -350,51 +350,55 @@ Image HelperMethods::AddRGB(const Image& top, unsigned char red, unsigned char g
 
 
 
-Image HelperMethods::Scale(const Image& top, bool red, int scaleX, bool green, int scaleY, bool blue, int scaleZ) {
+Image HelperMethods::Scale(const Image& top, bool red, float x, bool green, float y, bool blue, float z) {
+    // Load Images, Create Temp
     Image img = Image(top.GetHeader());
 
+    // Scale EACH PIXEL
     for (int i = 0; i < top.GetPixelVectorCount(); ++i) {
         Pixel pTop = top.GetIndPixel(i);
         unsigned char rgb[3];
         unsigned char rgbTemp[3];
 
+        // Fill RGBs
         for (int j = 0; j < 3; ++j)
             rgb[j] = pTop.GetRGB(j);
 
+        // Scale Selected Colors (Char, not Floats)
         if (red) {
-            int scaledRed = rgb[0] * scaleX;
-            if (scaledRed > global_max)
+            if (rgb[0] * x > global_max)
                 rgbTemp[0] = global_max;
             else
-                rgbTemp[0] = static_cast<unsigned char>(scaledRed);
+                rgbTemp[0] = static_cast<unsigned char>(rgb[0] * x);
         } else {
             rgbTemp[0] = rgb[0];
         }
 
         if (green) {
-            int scaledGreen = rgb[1] * scaleY;
-            if (scaledGreen > global_max)
+            if (rgb[1] * y > global_max)
                 rgbTemp[1] = global_max;
             else
-                rgbTemp[1] = static_cast<unsigned char>(scaledGreen);
+                rgbTemp[1] = static_cast<unsigned char>(rgb[1] * y);
         } else {
             rgbTemp[1] = rgb[1];
         }
 
         if (blue) {
-            rgbTemp[2] = 0; // Set the blue channel to 0
+            if (rgb[2] * z > global_max)
+                rgbTemp[2] = global_max;
+            else
+                rgbTemp[2] = static_cast<unsigned char>(rgb[2] * z);
         } else {
             rgbTemp[2] = rgb[2];
         }
 
+        // Add Pixel to Temp
         Pixel p = Pixel(rgbTemp[0], rgbTemp[1], rgbTemp[2]);
         img.AddPixel(p);
     }
 
     return img;
 }
-
-
 
 vector<Image> HelperMethods::SepRGB(const Image& top) {
     // Load Images, Create Temp
