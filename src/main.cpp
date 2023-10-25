@@ -120,8 +120,7 @@ int main(int argc, char* argv[]) {
     return 0;
 }
 
-    // Save the final tracking image to an output file
-    HelperMethods::writeFile("output/tracking_output.tga", trackingImage);
 
-    return 0;
-}
+
+
+
