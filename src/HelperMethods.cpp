@@ -228,34 +228,29 @@ Image HelperMethods::Subtract(const Image& top, const Image& bottom) {
     return img;
 }
 
-Image HelperMethods::Screen(const Image& top, const Image& bottom, const Image& screen) {
+Image HelperMethods::Screen(const Image& top, const Image& bottom) {
     // Load Images, Create Temp
-    Image temp = Multiply(top, bottom);
-    Image img = Image(temp.GetHeader());
+    Image img = Image(top.GetHeader());
 
     // SCREEN EACH PIXEL
-    for (int i = 0; i < screen.GetPixelVectorCount(); ++i) {
-        Pixel pTop = screen.GetIndPixel(i);
-        Pixel pBot = temp.GetIndPixel(i);
-        float rgb[6];
+    for (int i = 0; i < top.GetPixelVectorCount(); ++i) {
+        Pixel pTop = top.GetIndPixel(i);
+        Pixel pBot = bottom.GetIndPixel(i);
+        unsigned char rgb[6];
         unsigned char rgbTemp[3];
 
         // Fill RGBs
         for (int j = 0; j < 6; ++j) {
             if (j < 3)
-                rgb[j] = NormChar(pTop.GetRGB(j), global_max, global_min);
+                rgb[j] = pTop.GetRGB(j);
             else
-                rgb[j] = NormChar(pBot.GetRGB(j - 3), global_max, global_min);
+                rgb[j] = pBot.GetRGB(j - 3);
         }
 
-        // Multiply RGBs
+        // Screen blending mode formula
         for (int j = 0; j < 3; ++j) {
-            float a = 1 - (1 - rgb[j]) * (1 - rgb[j + 3]);
-            if (a > 1)
-                a = 1;
-            else if (a < 0)
-                a = 0;
-            rgbTemp[j] = (unsigned char)(a * 255 + 0.5f);
+            unsigned char result = 255 - ((255 - rgb[j]) * (255 - rgb[j + 3])) / 255;
+            rgbTemp[j] = result;
         }
 
         // Add Pixel to Temp
@@ -265,6 +260,7 @@ Image HelperMethods::Screen(const Image& top, const Image& bottom, const Image& 
 
     return img;
 }
+
 
 Image HelperMethods::Overlay(const Image& top, const Image& bottom) {
     // Load Images, Create Temp
@@ -350,51 +346,51 @@ Image HelperMethods::AddRGB(const Image& top, unsigned char red, unsigned char g
 
 
 Image HelperMethods::Scale(const Image& top, bool red, float x, bool green, float y, bool blue, float z) {
-	// Load Images, Create Temp
-	Image img = Image(top.GetHeader());
+    // Load Images, Create Temp
+    Image img = Image(top.GetHeader());
 
-	// Scale EACH PIXEL
-	for (int i = 0; i < top.GetPixelVectorCount(); ++i) {
-		Pixel pTop = top.GetIndPixel(i);
-		unsigned char rgb[3];
-		unsigned char rgbTemp[3];
+    // Scale EACH PIXEL
+    for (int i = 0; i < top.GetPixelVectorCount(); ++i) {
+        Pixel pTop = top.GetIndPixel(i);
+        unsigned char rgb[3];
+        unsigned char rgbTemp[3];
 
-		// Fill RGBs
-		for (int j = 0; j < 3; ++j)
-			rgb[j] = pTop.GetRGB(j);
+        // Fill RGBs
+        for (int j = 0; j < 3; ++j)
+            rgb[j] = pTop.GetRGB(j);
 
-		// Scale Selected Colors (Char, not Floats)
-		if (red == 1) {
-			if (rgb[0] * x > global_max)
-				rgbTemp[0] = global_max;
-			else
-				rgbTemp[0] = (unsigned char)(rgb[0] * x);
-		}
-		else
-			rgbTemp[0] = rgb[0];
-		if (green == 1) {
-			if (rgb[1] * y > global_max)
-				rgbTemp[1] = global_max;
-			else
-				rgbTemp[1] = (unsigned char)(rgb[1] * y);
-		}
-		else
-			rgbTemp[1] = rgb[1];
-		if (blue == 1) {
-			if (rgb[2] * z > global_max)
-				rgbTemp[2] = global_max;
-			else
-				rgbTemp[2] = (unsigned char)(rgb[2] * z);
-		}
-		else
-			rgbTemp[2] = rgb[2];
+        // Scale Selected Colors (Char, not Floats)
+        if (red == 1) {
+            if (rgb[0] * x > global_max)
+                rgbTemp[0] = global_max;
+            else
+                rgbTemp[0] = (unsigned char)(rgb[0] * x);
+        }
+        else
+            rgbTemp[0] = rgb[0];
+        if (green == 1) {
+            if (rgb[1] * y > global_max)
+                rgbTemp[1] = global_max;
+            else
+                rgbTemp[1] = (unsigned char)(rgb[1] * y);
+        }
+        else
+            rgbTemp[1] = rgb[1];
+        if (blue == 1) {
+            if (rgb[2] * z > global_max)
+                rgbTemp[2] = global_max;
+            else
+                rgbTemp[2] = (unsigned char)(rgb[2] * z);
+        }
+        else
+            rgbTemp[2] = rgb[2];
 
-		// Add Pixel to Temp
-		Pixel p = Pixel(rgbTemp[0], rgbTemp[1], rgbTemp[2]);
-		img.AddPixel(p);
-	}
+        // Add Pixel to Temp
+        Pixel p = Pixel(rgbTemp[0], rgbTemp[1], rgbTemp[2]);
+        img.AddPixel(p);
+    }
 
-	return img;
+    return img;
 }
 
 
@@ -458,6 +454,211 @@ Image HelperMethods::Rotate180(const Image& top) {
 
     return img;
 }
+
+#include "HelperMethods.h"
+using namespace HelperMethods;
+
+// ... (previous implementations)
+
+// Flip the image
+Image HelperMethods::Flip(const Image& top) {
+    // Load Image, Create Temp
+    Image img = Image(top.GetHeader());
+
+    // Flip EACH PIXEL horizontally
+    for (int i = 0; i < top.GetHeight(); ++i) {
+        for (int j = top.GetWidth() - 1; j >= 0; --j) {
+            Pixel p = top.GetIndPixel(i * top.GetWidth() + j);
+            img.AddPixel(p);
+        }
+    }
+
+    return img;
+}
+
+// Extract only the red channel
+Image HelperMethods::OnlyRed(const Image& top) {
+    // Load Image, Create Temp
+    Image img = Image(top.GetHeader());
+
+    // Extract the red channel
+    for (int i = 0; i < top.GetPixelVectorCount(); ++i) {
+        unsigned char red = top.GetIndPixel(i).GetRGB(0);
+        Pixel p = Pixel(red, red, red);
+        img.AddPixel(p);
+    }
+
+    return img;
+}
+
+// Extract only the green channel
+Image HelperMethods::OnlyGreen(const Image& top) {
+    // Load Image, Create Temp
+    Image img = Image(top.GetHeader());
+
+    // Extract the green channel
+    for (int i = 0; i < top.GetPixelVectorCount(); ++i) {
+        unsigned char green = top.GetIndPixel(i).GetRGB(1);
+        Pixel p = Pixel(green, green, green);
+        img.AddPixel(p);
+    }
+
+    return img;
+}
+
+// Extract only the blue channel
+Image HelperMethods::OnlyBlue(const Image& top) {
+    // Load Image, Create Temp
+    Image img = Image(top.GetHeader());
+
+    // Extract the blue channel
+    for (int i = 0; i < top.GetPixelVectorCount(); ++i) {
+        unsigned char blue = top.GetIndPixel(i).GetRGB(2);
+        Pixel p = Pixel(blue, blue, blue);
+        img.AddPixel(p);
+    }
+
+    return img;
+}
+
+// Add a certain value to the red channel
+Image HelperMethods::AddRed(const Image& top, int value) {
+    // Load Image, Create Temp
+    Image img = Image(top.GetHeader());
+
+    // Add the specified value to the red channel of each pixel
+    for (int i = 0; i < top.GetPixelVectorCount(); ++i) {
+        Pixel pTop = top.GetIndPixel(i);
+        unsigned char red = pTop.GetRGB(0) + value;
+
+        // Clamp the red channel value within [0, 255]
+        if (red > global_max)
+            red = global_max;
+        else if (red < global_min)
+            red = global_min;
+
+        Pixel p = Pixel(red, pTop.GetRGB(1), pTop.GetRGB(2));
+        img.AddPixel(p);
+    }
+
+    return img;
+}
+
+// Add a certain value to the green channel
+Image HelperMethods::AddGreen(const Image& top, int value) {
+    // Load Image, Create Temp
+    Image img = Image(top.GetHeader());
+
+    // Add the specified value to the green channel of each pixel
+    for (int i = 0; i < top.GetPixelVectorCount(); ++i) {
+        Pixel pTop = top.GetIndPixel(i);
+        unsigned char green = pTop.GetRGB(1) + value;
+
+        // Clamp the green channel value within [0, 255]
+        if (green > global_max)
+            green = global_max;
+        else if (green < global_min)
+            green = global_min;
+
+        Pixel p = Pixel(pTop.GetRGB(0), green, pTop.GetRGB(2));
+        img.AddPixel(p);
+    }
+
+    return img;
+}
+
+// Add a certain value to the blue channel
+Image HelperMethods::AddBlue(const Image& top, int value) {
+    // Load Image, Create Temp
+    Image img = Image(top.GetHeader());
+
+    // Add the specified value to the blue channel of each pixel
+    for (int i = 0; i < top.GetPixelVectorCount(); ++i) {
+        Pixel pTop = top.GetIndPixel(i);
+        unsigned char blue = pTop.GetRGB(2) + value;
+
+        // Clamp the blue channel value within [0, 255]
+        if (blue > global_max)
+            blue = global_max;
+        else if (blue < global_min)
+            blue = global_min;
+
+        Pixel p = Pixel(pTop.GetRGB(0), pTop.GetRGB(1), blue);
+        img.AddPixel(p);
+    }
+
+    return img;
+}
+
+// Scale the red channel
+Image HelperMethods::ScaleRed(const Image& top, int value) {
+    // Load Image, Create Temp
+    Image img = Image(top.GetHeader());
+
+    // Scale the red channel of each pixel by the specified value
+    for (int i = 0; i < top.GetPixelVectorCount(); ++i) {
+        Pixel pTop = top.GetIndPixel(i);
+        unsigned char red = static_cast<unsigned char>(pTop.GetRGB(0) * value);
+
+        // Clamp the red channel value within [0, 255]
+        if (red > global_max)
+            red = global_max;
+        else if (red < global_min)
+            red = global_min;
+
+        Pixel p = Pixel(red, pTop.GetRGB(1), pTop.GetRGB(2));
+        img.AddPixel(p);
+    }
+
+    return img;
+}
+
+// Scale the green channel
+Image HelperMethods::ScaleGreen(const Image& top, int value) {
+    // Load Image, Create Temp
+    Image img = Image(top.GetHeader());
+
+    // Scale the green channel of each pixel by the specified value
+    for (int i = 0; i < top.GetPixelVectorCount(); ++i) {
+        Pixel pTop = top.GetIndPixel(i);
+        unsigned char green = static_cast<unsigned char>(pTop.GetRGB(1) * value);
+
+        // Clamp the green channel value within [0, 255]
+        if (green > global_max)
+            green = global_max;
+        else if (green < global_min)
+            green = global_min;
+
+        Pixel p = Pixel(pTop.GetRGB(0), green, pTop.GetRGB(2));
+        img.AddPixel(p);
+    }
+
+    return img;
+}
+
+// Scale the blue channel
+Image HelperMethods::ScaleBlue(const Image& top, int value) {
+    // Load Image, Create Temp
+    Image img = Image(top.GetHeader());
+
+    // Scale the blue channel of each pixel by the specified value
+    for (int i = 0; i < top.GetPixelVectorCount(); ++i) {
+        Pixel pTop = top.GetIndPixel(i);
+        unsigned char blue = static_cast<unsigned char>(pTop.GetRGB(2) * value);
+
+        // Clamp the blue channel value within [0, 255]
+        if (blue > global_max)
+            blue = global_max;
+        else if (blue < global_min)
+            blue = global_min;
+
+        Pixel p = Pixel(pTop.GetRGB(0), pTop.GetRGB(1), blue);
+        img.AddPixel(p);
+    }
+
+    return img;
+}
+
 
 Image HelperMethods::Quadrant(const Image& first, const Image& second, const Image& third, const Image& fourth) {
     // Load Images, Create Temp
