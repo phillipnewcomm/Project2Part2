@@ -3,6 +3,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <fstream> // Include this header for file validation
 
 int main(int argc, char* argv[]) {
     if (argc < 3) {
@@ -10,8 +11,16 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    // Load the tracking image from the command-line argument
+    // Validate the tracking image
     std::string trackingImagePath = argv[1];
+    std::ifstream trackingFile(trackingImagePath.c_str());
+    if (!trackingFile.is_open()) {
+        std::cerr << "Could not load: '" << trackingImagePath << "'. Sorry!" << std::endl;
+        return 1;
+    }
+    trackingFile.close();
+
+    // Load the tracking image
     Image trackingImage = HelperMethods::readFile(trackingImagePath);
 
     // Iterate through command-line arguments starting from the third argument
