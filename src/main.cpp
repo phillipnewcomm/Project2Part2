@@ -43,7 +43,7 @@ int main(int argc, char* argv[]) {
         else if (operation == "screen" && i + 1 < argc) {
             std::string imagePath = argv[i + 1];
             Image image = HelperMethods::readFile(imagePath);
-            trackingImage = HelperMethods::Screen(image, trackingImage);
+            trackingImage = HelperMethods::Screen(trackingImage, image);  // Corrected order of arguments
             i++;
         }
             // Combine
@@ -113,6 +113,12 @@ int main(int argc, char* argv[]) {
             return 1;
         }
     }
+
+    // Save the final tracking image to an output file
+    HelperMethods::writeFile("output/tracking_output.tga", trackingImage);
+
+    return 0;
+}
 
     // Save the final tracking image to an output file
     HelperMethods::writeFile("output/tracking_output.tga", trackingImage);
