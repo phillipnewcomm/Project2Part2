@@ -1,28 +1,13 @@
-CXX = g++
-CXXFLAGS = -std=c++11
-
-SRC_DIR = src
-OUTPUT_DIR = output
-
-EXE = project2.out
-
-.PHONY: all clean run tests
-
-all: $(EXE)
-
-$(EXE): $(wildcard $(SRC_DIR)/*.cpp)
-	$(CXX) $(CXXFLAGS) -o $@ $^
+build:
+	g++ -std=c++11 -o project2.out src/*.cpp
 
 clean:
-	rm -f $(OUTPUT_DIR)/*
-	rm -f $(EXE)
+	rm -f output/*
 
-run: $(EXE)
-	./$(EXE)
+run:
+	./project2.out
 
 tasks: $(EXE)
-	./$(EXE) output/tracking_output.tga multiply $(SRC_DIR)/circles.tga
-	./$(EXE) output/flip_output.tga flip $(SRC_DIR)/layer1.tga
-	./$(EXE) output/subtract_output.tga subtract $(SRC_DIR)/layer1.tga $(SRC_DIR)/layer2.tga
-
-tests: all tasks
+	./$(EXE) output/output1.tga multiply src/circles.tga src/layer1.tga
+	./$(EXE) output/output2.tga flip src/layer1.tga
+	./$(EXE) output/output3.tga subtract src/layer1.tga src/layer2.tga
