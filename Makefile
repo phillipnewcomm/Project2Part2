@@ -7,7 +7,7 @@ clean:
 run:
 	./project2.out
 
-tasks: 
-	output/output1.tga multiply src/circles.tga src/layer1.tga
-	output/output2.tga flip src/layer1.tga
-	output/output3.tga subtract src/layer1.tga src/layer2.tga
+tasks: $(EXE)
+   	./$(EXE) output/output11.tga src/circles.tga multiply src/layer1.tga
+	./$(EXE) output/output12.tga flip src/layer1.tga
+	./$(EXE) output/output13.tga subtract src/layer1.tga src/layer2.tga
