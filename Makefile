@@ -21,8 +21,8 @@ run: $(EXE)
 	./$(EXE)
 
 tasks: $(EXE)
-	./$(EXE) multiply $(SRC_DIR)/circles.tga $(SRC_DIR)/layer1.tga $(OUTPUT_DIR)/output1.tga
-	./$(EXE) flip $(SRC_DIR)/layer1.tga $(OUTPUT_DIR)/output2.tga
-	./$(EXE) subtract $(SRC_DIR)/layer1.tga $(SRC_DIR)/layer2.tga $(OUTPUT_DIR)/output3.tga
+	./$(EXE) output/tracking_output.tga multiply $(SRC_DIR)/circles.tga $(SRC_DIR)/layer1.tga
+	./$(EXE) output/flip_output.tga flip $(SRC_DIR)/layer1.tga
+	./$(EXE) output/subtract_output.tga subtract $(SRC_DIR)/layer1.tga $(SRC_DIR)/layer2.tga
 
 tests: all tasks
