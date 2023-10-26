@@ -21,5 +21,6 @@ run: $(EXE)
 
 tasks: $(EXE)
 	./$(EXE) multiply $(SRC_DIR)/circles.tga $(SRC_DIR)/layer1.tga $(OUTPUT_DIR)/output1.tga
-	./$(EXE) rotate 180 $(SRC_DIR)/layer1.tga $(OUTPUT_DIR)/output2.tga
-	./$(EXE) subtract $(SRC_DIR)/layer1.tga $(SRC_DIR)/layer2.tga $(OUTPUT_DIR)/output3.tga
+	./$(EXE) flip $(SRC_DIR)/layer1.tga $(OUTPUT_DIR)/output2.tga
+	./$(EXE) subtract $(SRC_DIR)/layer2.tga $(SRC_DIR)/layer1.tga $(OUTPUT_DIR)/output3.tga
+
